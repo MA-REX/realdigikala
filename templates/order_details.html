@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container">
+    <div class="row">
+        <center>
+            <div class="col-8">
+               <h3>جزعیات سفارش</h3>
+
+
+                <div class="card">
+                    <div class="card-header">
+                        سفارش {{ order.id }} - {{ order.amount_paid|intcomma }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ order.full_name }}</h5>
+                        <p class="card-text">{{ order.shopping_address }}</p>
+                        <br>
+                        {% for item in items %}
+                            {{ item.product }}
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <a href="{% url 'orders' %}" class="btn btn-primary">بازگشت به سفارشات</a>
+            </div>
+            <br><br>
+        </center>
+    </div>
+</div>
+{% endblock %}

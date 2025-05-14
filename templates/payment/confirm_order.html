@@ -1,0 +1,103 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+{% block title %} فروشگاه من {% endblock %}
+
+{% block content %}
+    <body>
+
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">تایید نهایی</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">یه بار دیگه چک کن</p>
+                </div>
+            </div>
+        </header>
+        <br>
+    <div class="container">
+        <div class="row">
+            <center>
+                <div class="col-8">
+                    <div class="card">
+                      <div class="card-header">
+                        خلاصه سفارش شما
+                      </div>
+                      <div class="card-body">
+                          {% for product in cart_products %}
+                          <div class="container"><br><br>
+                              <div class="card mb-3" >
+                                  <div class="row g-0">
+                                      <div class="col-md-4">
+                                          <img src="{{ product.picture.url }}" class="img-fluid rounded-start" alt="...">
+                                      </div>
+
+                                      <div class="col-md-8">
+                                          <div class="card-body">
+                                              <h5 class="card-title">{{ product.name }}</h5><br>
+                                              <p class="card-text">{{ product.description }}</p>
+
+                                              {% if product.is_sale %}
+                                              <p> قیمت با تخفیف :</p>
+                                              <p class="card-text">{{ product.sale_price | intcomma }}</p>
+                                              {% else %}
+                                              <p>قیمت :</p>
+                                              <p class="card-text">{{ product.price | intcomma}} </p>
+                                              {% endif %}
+
+                                            تعداد :
+
+                                                {% for key,value in quantities.items %}
+                                                {% if key == product.id|slugify %}
+                                                    {{ value }}
+                                                {% endif %}
+                                                {% endfor %}
+
+
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          {% endfor %}
+                      <div class="border border-5">
+                          <p style="font-size: 2rem">مجموع کل قیمت</p>
+                          <p style="font-size: 2rem">{{ total|intcomma }}</p>
+                      </div>
+                      </div>
+                    </div>
+                </div>
+                <br>
+            <div class="col-8">
+                <div class="card">
+                      <div class="card-header">
+                        مشخصات ارسال شما
+                      </div>
+                      <div class="card-body">
+                        <form action="{% url 'process_order' %}" method="POST">
+                        {% csrf_token %}
+                        <p>نام و نام خانوادگی : {{ shopping_info.shopping_full_name }}</p>
+                        <p>ایمیل : {{ shopping_info.shopping_email }}</p>
+                        <p>آدرس 1 : {{ shopping_info.shopping_address1 }}</p>
+                        <p>آدرس 2 : {{ shopping_info.shopping_address2 }}</p>
+                        <p>شهر : {{ shopping_info.shopping_city }}</p>
+                        <p>منطقه : {{ shopping_info.shopping_state }}</p>
+                        <p>کد پستی : {{ shopping_info.shopping_zipcode }}</p>
+                        <p>کشور : {{ shopping_info.shopping_country }}</p>
+                        <button class="btn btn-outline-success" type="submit">نهایی سازیی خرید شما</button>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                <br>
+
+            </center>
+        </div>
+    </div>
+        <br><br><br>
+
+{% endblock %}

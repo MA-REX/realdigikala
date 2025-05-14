@@ -1,0 +1,103 @@
+{% extends 'base/base.html' %}
+{% load humanize %}
+{% block content %}
+{% if product.available %}
+<div class="container"><br><br><br><br><br>
+    <div class="card mb-3" >
+      <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ product.picture.url }}" class="img-fluid rounded-start" alt="..." style="height: 100%">
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5><br>
+                    <p class="card-text">{{ product.description }}</p>
+
+                    {% if product.is_sale %}<br>
+                    <p> قیمت با تخفیف :</p>
+                    <p class="card-text">{{ product.sale_price | intcomma }}</p>
+                    {% else %}
+                    <p>قیمت :</p>
+                    <p class="card-text">{{ product.price | intcomma}} </p>
+                    {% endif %}
+
+                    <select class="form-select" id="cart-qty" >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+
+                    <br><br>
+                    <button class="btn btn-secondary" type="button" value="{{ product.id }}" id="add-cart">اضافه کردن به سبد خرید</button>
+                    <a href="{% url 'index' %}" class="btn btn-secondary">صفحه اصلی</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><br><br><br>
+{% else %}
+<div class="container"><br><br><br><br><br>
+    <div class="card mb-3" >
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ product.picture.url }}" class="img-fluid rounded-start" alt="..." style="height: 100%">
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5><br>
+                    <p class="card-text">{{ product.description }}</p>
+
+                    {% if product.is_sale %}<br>
+                    <p> قیمت با تخفیف :</p>
+                    <p class="card-text">{{ product.sale_price | intcomma }}</p>
+                    {% else %}
+                    <p>قیمت :</p>
+                    <p class="card-text">فعلا این کالا موجود نیست با موجود شدن دوباره لیست قیمت بروزرسانی خواهد شد &hearts;</p>
+                    {% endif %}
+
+                    <select class="form-select" id="cart-qty" >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+
+                    <br><br>
+                    <button class="btn btn-secondary" type="button" value="{{ product.id }}" id="add-cart" disabled>اضافه کردن به سبد خرید</button>
+                    <a href="{% url 'index' %}" class="btn btn-secondary">صفحه اصلی</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><br><br>
+{% endif %}
+<script>
+$(document).on('click', '#add-cart', function (e){
+    e.preventDefault();
+    $.ajax({
+        type: 'POST',
+        url : '{% url 'cart_add' %}',
+        data : {
+            product_id: $('#add-cart').val(),
+            product_qty: $('#cart-qty option:selected').text(),
+            csrfmiddlewaretoken : '{{ csrf_token }}',
+            action : 'post',
+        },
+
+        success: function (json){
+            {#console.log(json)#}
+            document.getElementById('cart_quantity').textContent = json.qty;
+            location.reload();
+        },
+
+        error: function (xhr, errmsg, err){
+
+        }
+    })
+})
+</script>
+
+{% endblock %}
